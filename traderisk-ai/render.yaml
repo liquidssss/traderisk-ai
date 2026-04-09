@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: traderisk-backend
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node src/server.js
+    envVars:
+      - key: JWT_SECRET
+        scope: build
+      - key: SUPABASE_URL
+        scope: build
+      - key: SUPABASE_KEY
+        scope: build
+      - key: PORT
+        value: 3001
