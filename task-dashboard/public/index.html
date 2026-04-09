@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>Dashboard</h2>
+            <button class="sidebar-close" onclick="toggleSidebar()">&times;</button>
+        </div>
+        <nav class="sidebar-nav">
+            <button class="nav-item active" onclick="switchView('overview')">📊 Overview</button>
+            <button class="nav-item" onclick="switchView('analytics')">📈 Task Analytics</button>
+            <button class="nav-item" onclick="switchView('calendar')">📅 Calendar View</button>
+            <button class="nav-item" onclick="switchView('discord')">💬 Discord Activity</button>
+            <button class="nav-item" onclick="switchView('system')">⚙️ System Status</button>
+        </nav>
+    </div>
+
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-top">
+                <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+                <h1 id="view-title">📊 Task Dashboard</h1>
+            </div>
+            <div class="stats" id="stats-container">
+                <div class="stat">
+                    <span class="stat-label">Active</span>
+                    <span class="stat-value" id="stat-active">0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Upcoming</span>
+                    <span class="stat-value" id="stat-upcoming">0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Completed Today</span>
+                    <span class="stat-value" id="stat-today">0</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- New Task Form -->
+        <div class="new-task-section" id="overview-controls">
+            <button class="btn-create" onclick="openCreateModal()">+ New Task</button>
+        </div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Overview View -->
+            <div id="overview-view" class="view active">
+                <!-- Active Tasks -->
+                <section class="task-section">
+                    <h2>🔥 Active Tasks</h2>
+                    <div class="task-list" id="active-tasks">
+                        <p class="empty">No active tasks</p>
+                    </div>
+                </section>
+
+                <!-- Upcoming Tasks -->
+                <section class="task-section">
+                    <h2>📅 Upcoming Tasks</h2>
+                    <div class="task-list" id="upcoming-tasks">
+                        <p class="empty">No upcoming tasks</p>
+                    </div>
+                </section>
+
+                <!-- Completed Tasks -->
+                <section class="task-section">
+                    <h2>✅ Completed Tasks</h2>
+                    <div class="task-list" id="completed-tasks">
+                        <p class="empty">No completed tasks</p>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Task Analytics View -->
+            <div id="analytics-view" class="view">
+                <section class="task-section full-width">
+                    <h2>📈 Task Analytics</h2>
+                    <div class="analytics-grid">
+                        <div class="analytics-card">
+                            <h3>Completion Rate</h3>
+                            <div class="big-number" id="completion-rate">0%</div>
+                            <p class="subtitle" id="completion-count">0 of 0 tasks</p>
+                        </div>
+                        <div class="analytics-card">
+                            <h3>Average Duration</h3>
+                            <div class="big-number" id="avg-duration">0m</div>
+                            <p class="subtitle">per completed task</p>
+                        </div>
+                        <div class="analytics-card">
+                            <h3>Tasks Completed Today</h3>
+                            <div class="big-number" id="tasks-today">0</div>
+                            <p class="subtitle">total productivity</p>
+                        </div>
+                        <div class="analytics-card">
+                            <h3>Priority Distribution</h3>
+                            <div id="priority-chart" class="mini-chart"></div>
+                        </div>
+                    </div>
+                    <div class="analytics-detail">
+                        <h3>Task Duration by Priority</h3>
+                        <div id="duration-by-priority" class="chart-container"></div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Calendar View -->
+            <div id="calendar-view" class="view">
+                <section class="task-section full-width">
+                    <h2>📅 Calendar View</h2>
+                    <div class="calendar-container">
+                        <div class="calendar-header">
+                            <button onclick="previousMonth()">&lt;</button>
+                            <h3 id="calendar-month">April 2026</h3>
+                            <button onclick="nextMonth()">&gt;</button>
+                        </div>
+                        <div id="calendar-grid" class="calendar-grid"></div>
+                        <div class="calendar-legend">
+                            <div class="legend-item">
+                                <span class="legend-color active"></span>
+                                <span>Active</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color scheduled"></span>
+                                <span>Scheduled</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color completed"></span>
+                                <span>Completed</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Discord Activity View -->
+            <div id="discord-view" class="view">
+                <section class="task-section full-width">
+                    <h2>💬 Discord Activity</h2>
+                    <div class="discord-stats">
+                        <div class="stat-card">
+                            <h3>Rep Spreadsheet Posts</h3>
+                            <div class="big-number" id="discord-posts">0</div>
+                            <p class="subtitle">this month</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Next Scheduled Post</h3>
+                            <div id="next-post" class="scheduled-info">No posts scheduled</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Automation Status</h3>
+                            <div class="status-indicator" id="discord-status">Not configured</div>
+                        </div>
+                    </div>
+                    <div id="discord-activity-log" class="activity-log">
+                        <h3>Recent Activity</h3>
+                        <p class="empty">Waiting for Discord integration...</p>
+                    </div>
+                </section>
+            </div>
+
+            <!-- System Status View -->
+            <div id="system-view" class="view">
+                <section class="task-section full-width">
+                    <h2>⚙️ System Status</h2>
+                    <div class="system-grid">
+                        <div class="system-card">
+                            <h3>Dashboard Health</h3>
+                            <div class="status-healthy">✅ Healthy</div>
+                            <p class="timestamp" id="dashboard-uptime">Uptime: calculating...</p>
+                        </div>
+                        <div class="system-card">
+                            <h3>API Status</h3>
+                            <div class="status-healthy">✅ Connected</div>
+                            <p class="timestamp" id="api-ping">Ping: calculating...</p>
+                        </div>
+                        <div class="system-card">
+                            <h3>Integrations</h3>
+                            <div class="integration-list">
+                                <div class="integration-item">
+                                    <span>Discord</span>
+                                    <span class="status-badge not-configured">Not configured</span>
+                                </div>
+                                <div class="integration-item">
+                                    <span>Notion</span>
+                                    <span class="status-badge not-configured">Not configured</span>
+                                </div>
+                                <div class="integration-item">
+                                    <span>Gmail</span>
+                                    <span class="status-badge not-configured">Not configured</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="system-card">
+                            <h3>Performance</h3>
+                            <div class="perf-metrics">
+                                <div class="perf-metric">
+                                    <span>Response Time</span>
+                                    <span id="response-time">--ms</span>
+                                </div>
+                                <div class="perf-metric">
+                                    <span>Tasks Processed</span>
+                                    <span id="tasks-processed">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Create Task Modal -->
+    <div id="createModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeCreateModal()">&times;</span>
+            <h2>Create New Task</h2>
+            <form id="createTaskForm" onsubmit="createTask(event)">
+                <input type="text" id="taskTitle" placeholder="Task title" required>
+                <textarea id="taskDescription" placeholder="Description (optional)"></textarea>
+                <select id="taskPriority">
+                    <option value="1">🔴 Critical</option>
+                    <option value="2">🟠 High</option>
+                    <option value="3" selected>🟡 Medium</option>
+                    <option value="4">🟢 Low</option>
+                    <option value="5">⚪ Minimal</option>
+                </select>
+                <input type="number" id="taskDuration" placeholder="Est. duration (minutes)" min="5" value="30">
+                <label>
+                    <input type="checkbox" id="taskScheduled"> Schedule for later
+                </label>
+                <input type="datetime-local" id="taskScheduleTime" style="display:none;">
+                <button type="submit" class="btn-primary">Create Task</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Task Detail Modal -->
+    <div id="detailModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeDetailModal()">&times;</span>
+            <div id="taskDetailContent"></div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

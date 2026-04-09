@@ -1,0 +1,68 @@
+{
+  "version": 1,
+  "updatedAt": "2026-04-09T16:04:07.178Z",
+  "entries": {
+    "memory:memory/2026-04-01.md:25:39": {
+      "key": "memory:memory/2026-04-01.md:25:39",
+      "path": "memory/2026-04-01.md",
+      "startLine": 25,
+      "endLine": 39,
+      "source": "memory",
+      "snippet": "- **Strategy:** Focus on \"Discovery & Relationship Management\" rather than handling payments (which agents prefer to keep private). - **MVP Development:** - Developed a responsive web MVP (v1-v5). - Features: Professional sidebar, Marketplace with agent filtering, Discovery engine for trending creators, and secure messaging placeholders. - **Authentication:** Implemented a full signup/login system with hashed passwords and persistent storage (`db.json`). - **Backend:** Node.js/Express foundation with Prisma schema drafted. ### 4. Archived Projects - **VinoRide:** An Uber-style wine tour marketplace for Paso Robles. Drafted and then archived per user request to focus on Agent",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.000001093166506849036,
+      "maxScore": 0.000001093166506849036,
+      "firstRecalledAt": "2026-04-09T16:04:07.178Z",
+      "lastRecalledAt": "2026-04-09T16:04:07.178Z",
+      "queryHashes": [
+        "798f1bde98e3"
+      ],
+      "recallDays": [
+        "2026-04-09"
+      ],
+      "conceptTags": [
+        "v1-v5",
+        "signup/login",
+        "db.json",
+        "node.js/express",
+        "uber-style",
+        "strategy",
+        "focus",
+        "discovery"
+      ]
+    },
+    "memory:memory/2026-04-01.md:1:28": {
+      "key": "memory:memory/2026-04-01.md:1:28",
+      "path": "memory/2026-04-01.md",
+      "startLine": 1,
+      "endLine": 28,
+      "source": "memory",
+      "snippet": "# Memory - 2026-04-01 ## User Profile: Jackson Harper - **Age:** 19 (turns 20 on June 12). - **Location:** California (PST). - **Occupation:** Day Trader ($20k/month consistency) and full-time at Sun Day Carwash. - **Hobbies:** Just started rock climbing. - **Goals:** Automate repetitive tasks, organize life (Notion), scale business ventures. - **Blackout Window:** 10:00 PM - 5:45 AM PST. ## Key Projects & Progress ### 1. Task Dashboard - Built a real-time monitoring web app for OpenClaw tasks. - Accessible locally on port 3000 and exposed via Cloudflare Tunnel for mobile access. - Features: Active/Upcoming/Completed task tracking, Analytics, Calendar, and System Status. ### 2. Discord A",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 9.214651194876384e-7,
+      "maxScore": 9.214651194876384e-7,
+      "firstRecalledAt": "2026-04-09T16:04:07.178Z",
+      "lastRecalledAt": "2026-04-09T16:04:07.178Z",
+      "queryHashes": [
+        "798f1bde98e3"
+      ],
+      "recallDays": [
+        "2026-04-09"
+      ],
+      "conceptTags": [
+        "20k/month",
+        "full-time",
+        "real-time",
+        "active/upcoming/completed",
+        "user",
+        "profile",
+        "jackson",
+        "harper"
+      ]
+    }
+  }
+}

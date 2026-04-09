@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgentConnect - Discovery & Management</title>
+    <link rel="stylesheet" href="sidebar-v2.css">
+    <style>
+        :root { --primary: #3498db; --dark: #2c3e50; --white: #ffffff; --gray: #f4f7f6; --sidebar-width: 260px; }
+        body { font-family: 'Inter', sans-serif; margin: 0; background-color: var(--gray); color: var(--dark); display: flex; height: 100vh; overflow: hidden; }
+        @media (max-width: 1023px) { body { flex-direction: column; } }
+        .main { flex: 1; display: flex; flex-direction: column; overflow-y: auto; padding: 20px; position: relative; }
+        .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; padding: 10px 0; border-bottom: 1px solid #eee; }
+        .header-top h1 { font-size: 20px; color: var(--dark); font-weight: 800; letter-spacing: -0.5px; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .btn-primary { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s; display: flex; align-items: center; gap: 8px; font-family: inherit; }
+        .btn-primary:hover { opacity: 0.9; }
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .card { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #eee; transition: 0.2s; }
+        .card-title { font-weight: bold; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .status-badge { font-size: 11px; padding: 4px 8px; border-radius: 4px; font-weight: bold; text-transform: uppercase; }
+        .view { display: none; } .view.active { display: block; }
+        .form-group { margin-bottom: 20px; text-align: left; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; font-size: 14px; }
+        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-family: inherit; }
+        
+        .marketplace-tabs { display: flex; background: #eee; padding: 4px; border-radius: 10px; margin-bottom: 20px; max-width: 400px; }
+        .m-tab { flex: 1; text-align: center; padding: 10px; cursor: pointer; border-radius: 8px; font-size: 14px; font-weight: 600; color: #666; transition: 0.2s; }
+        .m-tab.active { background: white; color: var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 3000; align-items: center; justify-content: center; }
+        .modal.active { display: flex; }
+        .modal-content { background: white; padding: 30px; border-radius: 16px; width: 90%; max-width: 500px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+<div id="post-modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header"><h2>Create New Post</h2><button onclick="closeModal()" style="border:none;background:none;font-size:24px;cursor:pointer;">&times;</button></div>
+        <form onsubmit="handlePostSubmit(event)">
+            <div class="form-group"><label>Title of Post</label><input type="text" id="p-title" required></div>
+            <div class="form-group"><label>Payment Type</label><select id="p-payment"><option value="Fixed">Fixed Amount</option><option value="Commission">Commission Based</option></select></div>
+            <div class="form-group"><label>Reward/Rate Details</label><input type="text" id="p-reward" required placeholder="e.g. $150 or 10%"></div>
+            <div class="form-group"><label>Duration of Contract</label><input type="text" id="p-duration" required placeholder="e.g. 1 month"></div>
+            <div class="form-group"><label>Description</label><textarea id="p-desc" required></textarea></div>
+            <button type="submit" class="btn-primary" style="width: 100%; justify-content: center;">Publish Post</button>
+        </form>
+    </div>
+</div>
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-header"><h1>AGENT<span>CONNECT</span></h1></div>
+    <nav>
+        <div class="nav-item active" onclick="switchView('marketplace', this)"><span class="icon icon-marketplace"></span> Marketplace</div>
+        <div class="nav-item" onclick="switchView('applications', this)"><span class="icon icon-campaigns"></span> Applications</div>
+        <div class="nav-item" onclick="switchView('discovery', this)"><span class="icon icon-discovery"></span> Discover Creators</div>
+        <div class="nav-item" onclick="switchView('messages', this)"><span class="icon icon-messages"></span> Messages</div>
+        <div class="nav-item" onclick="switchView('settings', this)"><span class="icon icon-settings"></span> Settings</div>
+    </nav>
+    <div class="sidebar-footer">Logged in: <strong id="u-name">...</strong><br><span id="u-role">...</span><br><br><button onclick="logout()" style="color:#e74c3c;cursor:pointer;border:none;background:none;">Log Out</button></div>
+</div>
+
+<div class="main" id="main-content" style="display: none;">
+    <div class="header-top">
+        <button class="menu-trigger" onclick="toggleSidebar()"><span></span><span></span><span></span></button>
+        <h1>AGENT<span>CONNECT</span></h1>
+        <div id="u-avatar" style="width: 32px; height: 32px; background: var(--primary); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold;">?</div>
+    </div>
+    
+    <div id="marketplace-view" class="view active">
+        <div class="header">
+            <div><h2>🌍 Marketplace</h2>
+                <div class="marketplace-tabs">
+                    <div class="m-tab active" id="tab-find-agents" onclick="switchMarketplace('AGENT')">Find Agents</div>
+                    <div class="m-tab" id="tab-find-creators" onclick="switchMarketplace('CREATOR')">Find Creators</div>
+                </div>
+            </div>
+            <button class="btn-primary" onclick="openModal()"><span>+</span> Add Post</button>
+        </div>
+        <div class="card-grid" id="c-list"></div>
+    </div>
+
+    <div id="applications-view" class="view">
+        <div class="header"><h2>📋 Applications</h2>
+            <div class="marketplace-tabs"><div class="m-tab active" onclick="switchAppTab('sent', this)">Sent</div><div class="m-tab" onclick="switchAppTab('received', this)">Received</div></div>
+        </div>
+        <div id="sent-apps" class="app-content"><div class="card-grid" id="sent-list"></div></div>
+        <div id="received-apps" class="app-content" style="display:none;"><div class="card-grid" id="received-list"></div></div>
+    </div>
+
+    <div id="discovery-view" class="view"><div class="header"><h2>🔍 Trending Creators</h2></div><div class="card-grid" id="creator-list"></div></div>
+    <div id="messages-view" class="view"><div class="header"><h2>💬 Messages</h2></div><div class="card">No active conversations.</div></div>
+    <div id="settings-view" class="view"><div class="header"><h2>⚙️ Settings</h2></div><div class="card"><div class="form-group"><label>Name</label><input type="text" id="s-name"></div><button class="btn-primary" onclick="saveSettings()">Save</button></div></div>
+</div>
+
+<div id="auth-view" class="auth-view" style="display:flex;"><div class="auth-card">
+    <div class="auth-logo">AGENT<span>CONNECT</span></div>
+    <div class="auth-tabs"><div class="auth-tab active" onclick="switchAuthTab('login')">Log In</div><div class="auth-tab" onclick="switchAuthTab('signup')">Sign Up</div></div>
+    <form onsubmit="handleAuth(event)">
+        <div id="signup-fields" style="display:none;"><div class="form-group"><label>Full Name</label><input type="text" id="auth-name"></div></div>
+        <div class="form-group"><label>Email</label><input type="email" id="auth-email" required></div>
+        <div class="form-group"><label>Password</label><input type="password" id="auth-password" required></div>
+        <div id="role-field" style="display:none;"><div class="form-group"><label>I am a...</label><select id="auth-role"><option value="CREATOR">Creator</option><option value="AGENT">Agent</option></select></div></div>
+        <button type="submit" class="btn-primary" style="width:100%;justify-content:center;">Submit</button>
+    </form>
+</div></div>
+
+<script>
+    let currentUser = null, allPosts = [], currentMarketplaceRole = 'AGENT';
+
+    async function handleAuth(e) {
+        e.preventDefault();
+        const mode = document.querySelector('.auth-tab.active').innerText.toLowerCase().replace(' ', '');
+        const res = await fetch(`/api/auth/${mode}`, {
+            method: 'POST', headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ email: document.getElementById('auth-email').value, password: document.getElementById('auth-password').value, name: document.getElementById('auth-name').value, role: document.getElementById('auth-role').value })
+        });
+        const data = await res.json();
+        if (data.error) return alert(data.error);
+        currentUser = data.user; localStorage.setItem('ac_user', JSON.stringify(data.user)); showApp();
+    }
+
+    function showApp() {
+        document.getElementById('auth-view').style.display = 'none';
+        document.getElementById('main-content').style.display = 'flex';
+        document.getElementById('u-name').innerText = currentUser.name;
+        document.getElementById('u-role').innerText = currentUser.role;
+        document.getElementById('u-avatar').innerText = currentUser.name[0];
+        document.getElementById('s-name').value = currentUser.name;
+        loadMarketplace(); loadApplications(); loadCreators();
+    }
+
+    function openModal() { document.getElementById('post-modal').classList.add('active'); }
+    function closeModal() { document.getElementById('post-modal').classList.remove('active'); }
+
+    async function handlePostSubmit(e) {
+        e.preventDefault();
+        const body = { authorId: currentUser.id, authorName: currentUser.name, authorRole: currentUser.role, title: document.getElementById('p-title').value, paymentType: document.getElementById('p-payment').value, reward: document.getElementById('p-reward').value, duration: document.getElementById('p-duration').value, description: document.getElementById('p-desc').value };
+        const res = await fetch('/api/campaigns', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
+        if (res.ok) { closeModal(); loadMarketplace(); }
+    }
+
+    async function loadMarketplace() {
+        const res = await fetch('/api/campaigns');
+        allPosts = await res.json();
+        renderMarketplace();
+    }
+
+    function renderMarketplace() {
+        const list = allPosts.filter(p => p.authorRole === currentMarketplaceRole);
+        document.getElementById('c-list').innerHTML = list.map(c => `
+            <div class="card"><div class="card-title"><span style="color:var(--primary);font-size:11px;">${c.authorName}</span><span class="status-badge" style="background:#e8f5e9;color:#43a047;">${c.paymentType}</span></div>
+            <div style="font-weight:bold;margin-bottom:5px;">${c.title}</div>
+            <div style="font-size:14px;color:var(--primary);font-weight:700;margin-bottom:10px;">${c.reward} • ${c.duration}</div>
+            <p style="font-size:13px;color:#666;line-height:1.4;">${c.description}</p>
+            <button class="btn-primary" style="width:100%;margin-top:15px;" onclick="apply('${c.id}')">Apply for Contract</button></div>
+        `).join('') || '<p style="padding:20px;color:#999;">No posts found here yet.</p>';
+    }
+
+    function switchMarketplace(role) {
+        currentMarketplaceRole = role;
+        document.querySelectorAll('.m-tab').forEach(t => t.classList.remove('active'));
+        if (role === 'AGENT') document.getElementById('tab-find-agents').classList.add('active');
+        else document.getElementById('tab-find-creators').classList.add('active');
+        renderMarketplace();
+    }
+
+    async function apply(id) {
+        const res = await fetch('/api/applications', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({userId: currentUser.id, userName: currentUser.name, campaignId: id}) });
+        const data = await res.json();
+        if (data.error) alert(data.error);
+        else { alert('Application sent!'); loadApplications(); }
+    }
+
+    async function loadApplications() {
+        if (!currentUser) return;
+        const [sentRes, recvRes] = await Promise.all([fetch(`/api/applications/sent/${currentUser.id}`), fetch(`/api/applications/received/${currentUser.id}`)]);
+        const sent = await sentRes.json(), recv = await recvRes.json();
+        document.getElementById('sent-list').innerHTML = sent.map(a => `
+            <div class="card"><div class="card-title"><span>${a.agentName}</span><span class="status-badge" style="background:#fff3e0;color:#fb8c00;">${a.status}</span></div>
+            <div style="font-weight:bold;">${a.campaignTitle}</div></div>
+        `).join('') || '<p>No sent apps.</p>';
+        document.getElementById('received-list').innerHTML = recv.map(a => `
+            <div class="card"><div class="card-title"><span>From: ${a.userName}</span><span class="status-badge">${a.status}</span></div>
+            <div style="font-weight:bold;margin-bottom:10px;">${a.campaignTitle}</div>
+            ${a.status === 'Pending' ? `<button class="btn-primary" style="background:#27ae60;" onclick="updateAppStatus('${a.id}','Accepted')">Accept</button>` : ''}</div>
+        `).join('') || '<p>No received apps.</p>';
+    }
+
+    async function updateAppStatus(id, status) { await fetch(`/api/applications/${id}`, { method:'PATCH', headers:{'Content-Type':'application/json'}, body:JSON.stringify({status}) }); loadApplications(); }
+
+    function switchAppTab(t, el) {
+        document.querySelectorAll('#applications-view .m-tab').forEach(i => i.classList.remove('active'));
+        el.classList.add('active');
+        document.getElementById('sent-apps').style.display = t === 'sent' ? 'block' : 'none';
+        document.getElementById('received-apps').style.display = t === 'received' ? 'block' : 'none';
+    }
+
+    async function loadCreators() { const res = await fetch('/api/creators'); const creators = await res.json(); document.getElementById('creator-list').innerHTML = creators.map(u => `<div class="card"><b>${u.name}</b><p>${u.niche}</p></div>`).join(''); }
+    function switchView(v, el) { document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active')); el.classList.add('active'); document.querySelectorAll('.view').forEach(view => view.classList.remove('active')); document.getElementById(`${v}-view`).classList.add('active'); if (window.innerWidth < 1024) toggleSidebar(); }
+    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('show'); document.getElementById('sidebarOverlay').classList.toggle('show'); }
+    function switchAuthTab(mode) { document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active')); event.target.classList.add('active'); document.getElementById('signup-fields').style.display = mode === 'signup' ? 'block' : 'none'; document.getElementById('role-field').style.display = mode === 'signup' ? 'block' : 'none'; }
+    function logout() { localStorage.clear(); window.location.reload(); }
+    const saved = localStorage.getItem('ac_user'); if (saved) { currentUser = JSON.parse(saved); showApp(); }
+</script>
+</body>
+</html>

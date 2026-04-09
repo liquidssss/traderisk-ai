@@ -1,0 +1,129 @@
+{
+  "users": [
+    {
+      "id": "612f61ce-98de-4924-a75d-edb8a7bc2189",
+      "name": "Lumi",
+      "email": "jxcksonhxrper@gmail.com",
+      "password": "$2b$10$qwBwYgTwWCCrzzuht2xSBu0V1oDFwiUOO3AYN8qBK6YPFhGX1Lq5K",
+      "role": "CREATOR",
+      "createdAt": "2026-04-01T21:59:59.779Z"
+    },
+    {
+      "id": "08aef348-4f20-407b-8b28-d3acb3e795df",
+      "name": "Jahd",
+      "email": "javejcha@gmail.com",
+      "password": "$2b$10$cToivJBTWlWdxCbeMSgC3uUNI65EPS992vU2AHdG2HWs3BNQPrp2S",
+      "role": "AGENT",
+      "createdAt": "2026-04-01T22:26:12.607Z"
+    },
+    {
+      "id": "ae4d2381-8490-458a-bd68-e34708281189",
+      "name": "Ashlynn Smith",
+      "email": "ashlynn2015@icloud.com",
+      "password": "$2b$10$Z85dV4hNtyje7yPZw6kyZ.FUIlgDWTxKucPLU5Fz.8dktAey/c4.i",
+      "role": "CREATOR",
+      "createdAt": "2026-04-01T22:46:41.203Z"
+    }
+  ],
+  "agents": [
+    {
+      "id": 1,
+      "name": "CNfans",
+      "rating": 4.8,
+      "activeCampaigns": 5,
+      "budget": "$10k+"
+    },
+    {
+      "id": 2,
+      "name": "KakoBuy",
+      "rating": 4.5,
+      "activeCampaigns": 3,
+      "budget": "$5k"
+    },
+    {
+      "id": 3,
+      "name": "MuleBuy",
+      "rating": 4.7,
+      "activeCampaigns": 8,
+      "budget": "$20k+"
+    }
+  ],
+  "campaigns": [
+    {
+      "id": "28267317-385f-417a-87dc-1769e029ff06",
+      "authorId": "08aef348-4f20-407b-8b28-d3acb3e795df",
+      "authorName": "Jahd",
+      "title": "Testing",
+      "paymentType": "Commission",
+      "reward": "Huh",
+      "description": "Hhh",
+      "duration": "Hhh",
+      "platforms": [
+        "TikTok"
+      ],
+      "niche": "Streetwear",
+      "createdAt": "2026-04-02T00:43:49.218Z"
+    },
+    {
+      "id": "fc81868f-3dad-4581-9200-0f99c94389c1",
+      "authorId": "08aef348-4f20-407b-8b28-d3acb3e795df",
+      "authorName": "Jahd",
+      "title": "Testing",
+      "paymentType": "Commission",
+      "reward": "Huh",
+      "description": "Hhh",
+      "duration": "Hhh",
+      "platforms": [
+        "TikTok"
+      ],
+      "niche": "Streetwear",
+      "createdAt": "2026-04-02T00:43:35.855Z"
+    },
+    {
+      "id": "f5f75d7e-1740-42ba-8bb4-2663b69e2ad7",
+      "authorId": "08aef348-4f20-407b-8b28-d3acb3e795df",
+      "authorName": "Jahd",
+      "title": "Testing",
+      "paymentType": "Fixed",
+      "reward": "150",
+      "description": "Test",
+      "duration": "1month",
+      "platforms": [
+        "TikTok"
+      ],
+      "niche": "Streetwear",
+      "createdAt": "2026-04-02T00:42:48.394Z"
+    },
+    {
+      "id": "c1",
+      "authorId": "08aef348-4f20-407b-8b28-d3acb3e795df",
+      "authorName": "Jahd",
+      "authorRole": "AGENT",
+      "title": "Summer Haul Series",
+      "paymentType": "Fixed",
+      "reward": "$150",
+      "duration": "1 month",
+      "description": "Looking for TikTok creators to showcase summer hauls",
+      "niche": "Streetwear",
+      "platforms": [
+        "TikTok",
+        "Instagram"
+      ],
+      "createdAt": "2026-04-02T00:25:04.573Z"
+    }
+  ],
+  "applications": [
+    {
+      "id": "32a3d6eb-653f-4d85-9a21-5719b3e21a90",
+      "userId": "08aef348-4f20-407b-8b28-d3acb3e795df",
+      "userName": "Jahd",
+      "campaignId": "c1",
+      "posterId": "08aef348-4f20-407b-8b28-d3acb3e795df",
+      "campaignTitle": "Summer Haul Series",
+      "agentName": "Jahd",
+      "status": "Accepted",
+      "createdAt": "2026-04-02T00:42:52.844Z"
+    }
+  ],
+  "messages": []
+}

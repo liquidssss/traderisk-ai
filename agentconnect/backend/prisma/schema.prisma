@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  password      String
+  name          String
+  role          Role      @default(CREATOR)
+  profileStats  Json?     // { followers: 100000, platform: "TikTok" }
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  campaigns     Campaign[] @relation("CreatorCampaigns")
+  agentCampaigns Campaign[] @relation("AgentCampaigns")
+}
+
+enum Role {
+  CREATOR
+  AGENT
+  ADMIN
+}
+
+model Campaign {
+  id            String    @id @default(uuid())
+  title         String
+  description   String
+  reward        String
+  platforms     String[]
+  niche         String
+  status        CampaignStatus @default(ACTIVE)
+  agentId       String
+  agent         User      @relation("AgentCampaigns", fields: [agentId], references: [id])
+  creators      User[]    @relation("CreatorCampaigns")
+  submissions   Submission[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+enum CampaignStatus {
+  ACTIVE
+  PAUSED
+  COMPLETED
+}
+
+model Submission {
+  id            String    @id @default(uuid())
+  campaignId    String
+  campaign      Campaign  @relation(fields: [campaignId], references: [id])
+  creatorId     String
+  proofUrl      String    // Link to video or screenshot
+  status        SubmissionStatus @default(PENDING)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+enum SubmissionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
